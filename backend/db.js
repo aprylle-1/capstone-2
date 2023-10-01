@@ -10,7 +10,7 @@ const { getDatabaseUri } = require("./config");
 let db;
 
 db = new Client({
-  connectionString: "postgresql:///capstone_2_backend"
+  connectionString: "postgres://ccdatabase_msx5_user:e6r9zkHIDOeV7Zm04Ht3cVAeJwKJ05J1@dpg-ckc8t3kiibqc73ahcesg-a.singapore-postgres.render.com/ccdatabase_msx5?ssl=true"
 });
 
 // if (process.env.NODE_ENV === "production") {

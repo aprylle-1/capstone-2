@@ -56,15 +56,7 @@ function App() {
       navigate("/main")
     }
     catch(errs){
-      const errors = errs.map(err=>{
-        if(error_map[err]){
-          return error_map[err]
-        }
-        else{
-          return err
-        }
-      })
-      alert(errors)
+      alert(errs)
     }
   }
 

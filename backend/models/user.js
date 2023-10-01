@@ -33,7 +33,6 @@ class User {
             `,
             [username]
         );
-
         if (duplicateCheck.rows[0]) {
             throw new BadRequestError(`Username ${username} already exists.`);
         }
@@ -96,8 +95,8 @@ class User {
         const check = await db.query(
             `
                 SELECT * FROM following
-                WHERE following_id = $1
-            `,[followingId])
+                WHERE following_id = $1 AND follower_id = $2
+            `,[followingId, followerId])
         
         if (check.rows.length > 0) throw new BadRequestError(`${followerUsername} is already following ${followingUsername}`)
 
@@ -105,7 +104,7 @@ class User {
             INSERT INTO following
             VALUES ($1, $2)
         `,[followerId, followingId])
-        return "successully followed"
+        return "successfully followed"
     }
 
     static async unfollow (followerUsername, followingUsername) {
@@ -139,7 +138,7 @@ class User {
             FROM following
             WHERE follower_id = $1 AND following_id = $2
         `,[followerId, followingId])
-        return "successully unfollowed"
+        return "successfully unfollowed"
     }
 
     static async getFollowingUsers (username) {
@@ -185,6 +184,14 @@ class User {
         else {
             return [];
         }
+    }
+
+    static async getKEY () {
+        const data = await db.query(`
+            SELECT key FROM keys
+            WHERE id = $1
+        `,[1]);
+        return data.rows[0].key
     }
 }
 

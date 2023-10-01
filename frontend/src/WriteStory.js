@@ -4,14 +4,14 @@ import Navbar from './Navbar';
 import './WriteStory.css';
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ConnectToBackend from './ConnectToApi';
 const WriteStory = ({save, currentUser, logout}) => {
     const [prompt, setPrompt] = useState('');
     const [content, setContent] = useState('');
     const [title, setTitle] = useState('');
     const [buttonText, setButtonText] = useState('Start Writing')
-    const OPENAI_API_KEY = "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";
+    const [OPENAI_API_KEY, setKey] = useState(null)
     const navigate = useNavigate()
-    
     useEffect(()=>{
         function getFromLocalStorage (){
             if (!localStorage.token && !localStorage.username){
@@ -19,6 +19,11 @@ const WriteStory = ({save, currentUser, logout}) => {
             }
           }
           getFromLocalStorage()
+          async function getAPIKEY (){
+            const OPENAI_API_KEY = await ConnectToBackend.getAPIKEY();
+            setKey(OPENAI_API_KEY)
+        }
+        getAPIKEY()
     },[])
 
     const handleGenerate = () => {
@@ -43,9 +48,9 @@ const WriteStory = ({save, currentUser, logout}) => {
         .then((result) => {
             console.log(result.data.choices[0].message.content);
             const text = result.data.choices[0].message.content
-            const titleRegex = /Title:\s"([^"]+)"/;
+            const titleRegex = /Title:\s([^\n]+)/;
             const titleMatch = text.match(titleRegex);
-            const title = titleMatch[1];
+            const title = titleMatch[1].replace('"', '');
             setTitle(title)
             
             const storyRegex = /Story:\s+([\s\S]+)/;
